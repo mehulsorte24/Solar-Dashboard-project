@@ -3,15 +3,15 @@ import { useSystem } from '../context/SystemContext';
 import { KpiCard } from '../components/cards/KpiCard';
 import { CommunicationQualityCard } from '../components/cards/CommunicationQualityCard';
 import { PowerTimeChart } from '../components/charts/PowerTimeChart';
-import { MultiParameterChart } from '../components/charts/MultiParameterChart';
 import { SystemHealthGrid } from '../components/status/SystemHealthGrid';
+import { SystemFlowDiagram } from '../components/status/SystemFlowDiagram';
 import type { TelemetryData } from '../types/system';
 import { dataAdapter } from '../services/dataAdapter';
-import { Zap, BatteryCharging, Gauge, Activity, Thermometer, Droplets, ShieldCheck, Sun, CheckCircle2 } from 'lucide-react';
-import { evaluateTempSeverity } from '../config/thresholds';
+import { Zap, Battery, Gauge, Activity, Thermometer, Sun, ShieldCheck, CheckCircle2, Droplets, Lightbulb, Bell, BarChart3, TrendingUp } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export const DashboardPage: React.FC = () => {
-  const { dashboardSummary, latestTelemetry, operatingMode, thresholds } = useSystem();
+  const { dashboardSummary, latestTelemetry, operatingMode } = useSystem();
   const [history, setHistory] = useState<TelemetryData[]>([]);
 
   useEffect(() => {
@@ -25,83 +25,44 @@ export const DashboardPage: React.FC = () => {
   const temp = latestTelemetry?.temperature ?? dashboardSummary?.temperature ?? 31.0;
   const humidity = latestTelemetry?.humidity ?? dashboardSummary?.humidity ?? 77.8;
 
-  const tempSeverity = evaluateTempSeverity(temp, thresholds);
-  const tempStatusColor = tempSeverity === 'CRITICAL' ? 'red' : tempSeverity === 'WARNING' ? 'yellow' : 'blue';
+  // Mock bar data for daily energy generation
+  const barData = [
+    { day: 'Mon', energy: 10.2 },
+    { day: 'Tue', energy: 11.4 },
+    { day: 'Wed', energy: 12.1 },
+    { day: 'Thu', energy: 12.8 },
+    { day: 'Fri', energy: 13.2 },
+    { day: 'Sat', energy: 12.7 },
+    { day: 'Sun', energy: 12.5 },
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Top Banner (As requested in section 7) */}
-      <div className="p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      {/* Greeting Banner (Matching Image 1) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <Sun className="w-5 h-5 text-amber-400" />
-            <h2 className="text-xl font-bold tracking-wide text-slate-100 uppercase">
-              SOLAR MONITORING
+            <h2 className="text-xl font-bold tracking-wide text-slate-100">
+              Good Morning, Operator
             </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Real-time telemetry from ESP32-S3 LoRa Solar Transmitter node & RS485 Modbus Energy Meter.
+          <p className="text-xs text-slate-400 mt-0.5">
+            Here's what's happening with your solar system today.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800 text-xs font-mono">
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-bold text-emerald-400">● SYSTEM RUNNING</span>
+        {operatingMode === 'simple' && (
+          <div className="px-3.5 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs font-semibold text-emerald-300 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>🟢 OPERATOR MODE ACTIVE — SYSTEM SAFE</span>
           </div>
-          <div className="h-4 w-[1px] bg-slate-800" />
-          <div className="text-slate-400">
-            Mode: <span className="text-cyan-400 font-bold uppercase">{operatingMode}</span>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* SIMPLE MODE OPERATOR SUMMARY BANNER (Section 9) */}
-      {operatingMode === 'simple' && (
-        <div className="p-6 rounded-2xl border border-emerald-800/40 bg-emerald-950/20 backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-emerald-300 uppercase tracking-wide">
-                  SOLAR SYSTEM IS WORKING NORMALLY
-                </h3>
-                <p className="text-xs text-slate-300">
-                  All solar panels, energy meters, and communication links are running healthy with no critical alerts.
-                </p>
-              </div>
-            </div>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-900/60 border border-emerald-700 text-emerald-300">
-              🟢 OPERATOR SAFE
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-3 border-t border-emerald-900/50">
-            <div>
-              <span className="text-xs text-slate-400">Today's Production</span>
-              <div className="text-2xl font-bold text-slate-100 font-mono mt-0.5">{energy} kWh</div>
-            </div>
-            <div>
-              <span className="text-xs text-slate-400">Current Output</span>
-              <div className="text-2xl font-bold text-amber-400 font-mono mt-0.5">{power} W</div>
-            </div>
-            <div>
-              <span className="text-xs text-slate-400">Environment</span>
-              <div className="text-2xl font-bold text-slate-100 font-mono mt-0.5">{temp}°C / {humidity}%</div>
-            </div>
-            <div>
-              <span className="text-xs text-slate-400">Communication</span>
-              <div className="text-xl font-bold text-emerald-400 mt-0.5">🟢 Excellent</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 8 REQUIRED DASHBOARD KPI CARDS (Section 7) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 6 DISTINCT KPI CARDS (Matching Image 1) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
         
         {/* 1. Current Power */}
         <KpiCard
@@ -109,9 +70,8 @@ export const DashboardPage: React.FC = () => {
           value={power}
           unit="W"
           icon={Zap}
-          statusColor="yellow"
-          subtitle="Solar AC Generation"
-          trend="Peak: 1180 W"
+          colorScheme="green"
+          trend="↑ 4.2% vs yesterday"
         />
 
         {/* 2. Today's Energy */}
@@ -119,81 +79,260 @@ export const DashboardPage: React.FC = () => {
           title="Today's Energy"
           value={energy}
           unit="kWh"
-          icon={BatteryCharging}
-          statusColor="green"
-          subtitle="Cumulative Output"
-          trend="+1.4 kWh / hr"
+          icon={Battery}
+          colorScheme="amber"
+          trend="↑ 12.7% vs yesterday"
         />
 
         {/* 3. Voltage */}
         <KpiCard
-          title="Line Voltage"
+          title="Voltage"
           value={voltage}
           unit="V"
           icon={Gauge}
-          statusColor="blue"
-          subtitle="Grid Nominal: 230 V"
-          technicalDetail="Frequency: 50.0 Hz"
+          colorScheme="cyan"
+          statusText="NORMAL"
         />
 
         {/* 4. Current */}
         <KpiCard
-          title="System Current"
+          title="Current"
           value={current}
           unit="A"
           icon={Activity}
-          statusColor="blue"
-          subtitle="Modbus RS485 Meter"
-          technicalDetail="Power Factor: 0.95"
+          colorScheme="purple"
+          statusText="NORMAL"
         />
 
         {/* 5. Temperature */}
         <KpiCard
-          title="Panel Ambient Temp"
+          title="Temperature"
           value={temp}
           unit="°C"
           icon={Thermometer}
-          statusColor={tempStatusColor}
-          subtitle="DHT22 Sensor Node"
-          technicalDetail={`Warn Threshold: ${thresholds.temp_warning}°C`}
+          colorScheme="rose"
+          statusText="NORMAL"
         />
 
-        {/* 6. Humidity */}
+        {/* 6. System Status */}
         <KpiCard
-          title="Ambient Humidity"
-          value={humidity}
-          unit="%"
-          icon={Droplets}
-          statusColor="blue"
-          subtitle="Outdoor Conditions"
-          technicalDetail="Dew Point: 23.4°C"
-        />
-
-        {/* 7. Communication */}
-        <CommunicationQualityCard />
-
-        {/* 8. System Status */}
-        <KpiCard
-          title="System Overall Status"
-          value={dashboardSummary?.system_status || 'ONLINE'}
+          title="System Status"
+          value="ONLINE"
           icon={ShieldCheck}
-          statusColor="green"
-          subtitle="All Gateways Syncing"
-          technicalDetail="PLC & SCADA Healthy"
+          colorScheme="green"
+          badgeText="● ONLINE"
         />
 
       </div>
 
-      {/* CHARTS SECTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Power vs Time Chart */}
-        <PowerTimeChart data={history} />
+      {/* MIDDLE SECTION: Charts & Side Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Column (2/3): Power Generation + Environmental */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          {/* Main Power Generation Area Chart */}
+          <PowerTimeChart data={history} title="Power Generation (Real-time power output)" height={280} />
 
-        {/* Dynamic Multi-Parameter Chart */}
-        <MultiParameterChart data={history} />
+          {/* Environmental Conditions Card */}
+          <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] backdrop-blur-md shadow-lg space-y-4">
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-mono">
+              <Thermometer className="w-4 h-4 text-cyan-400" />
+              Environmental Conditions
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-3.5 rounded-xl bg-[#070c18] border border-rose-500/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
+                    <Thermometer className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block">Temperature</span>
+                    <span className="text-lg font-bold text-slate-100 font-mono">{temp} °C</span>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                  Normal
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#070c18] border border-purple-500/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+                    <Droplets className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block">Humidity</span>
+                    <span className="text-lg font-bold text-slate-100 font-mono">{humidity} %</span>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                  Normal
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#070c18] border border-amber-500/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                    <Lightbulb className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block">Ambient Light</span>
+                    <span className="text-lg font-bold text-slate-100 font-mono">856 lux</span>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                  Good
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Column (1/3): Communication Quality + Recent Alerts */}
+        <div className="space-y-6">
+          
+          {/* LoRa Communication Quality */}
+          <CommunicationQualityCard />
+
+          {/* Recent Alerts Panel (Matching Image 1) */}
+          <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] backdrop-blur-md shadow-lg space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-mono">
+                <Bell className="w-4 h-4 text-rose-400" />
+                Recent Alerts
+              </h3>
+              <span className="text-[11px] text-cyan-400 cursor-pointer hover:underline">View All</span>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="p-2.5 rounded-xl bg-[#070c18] border border-rose-500/30 flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-bold text-slate-200">High Temperature</div>
+                  <div className="text-[10px] text-slate-500 font-mono">26 Sep, 10:32 AM • Ambient 41.2°C</div>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-950 text-rose-300 border border-rose-800">
+                  CRITICAL
+                </span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-[#070c18] border border-amber-500/30 flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-bold text-slate-200">Low Communication</div>
+                  <div className="text-[10px] text-slate-500 font-mono">26 Sep, 09:54 AM • LoRa signal degraded</div>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-950 text-amber-300 border border-amber-800">
+                  WARNING
+                </span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-[#070c18] border border-cyan-500/30 flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-bold text-slate-200">System Recovered</div>
+                  <div className="text-[10px] text-slate-500 font-mono">26 Sep, 09:58 AM • MQTT reconnected</div>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                  INFO
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
-      {/* SYSTEM HEALTH GRID */}
+      {/* BOTTOM SECTION: Energy Generation & Voltage Line + Today Summary & Flow */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Column (2/3): Daily Energy Bar Chart & Voltage/Current Dual Line */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Daily Energy Generation Bar Chart */}
+            <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] shadow-lg">
+              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4 flex items-center gap-2 font-mono">
+                <BarChart3 className="w-4 h-4 text-cyan-400" />
+                Energy Generation (Daily kWh)
+              </h3>
+              <div style={{ width: '100%', height: 200 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#162238" vertical={false} />
+                    <XAxis dataKey="day" stroke="#64748b" fontSize={11} axisLine={{ stroke: '#162238' }} />
+                    <YAxis stroke="#64748b" fontSize={11} axisLine={{ stroke: '#162238' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#070c18', borderColor: '#162238', color: '#f8fafc', fontSize: '11px' }} />
+                    <Bar dataKey="energy" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Voltage & Current Dual Line Chart */}
+            <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] shadow-lg">
+              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4 flex items-center gap-2 font-mono">
+                <TrendingUp className="w-4 h-4 text-purple-400" />
+                Voltage & Current Overlay
+              </h3>
+              <div style={{ width: '100%', height: 200 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={history.slice(-10)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#162238" vertical={false} />
+                    <XAxis dataKey="timestamp" tickFormatter={(t) => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} stroke="#64748b" fontSize={10} />
+                    <YAxis stroke="#64748b" fontSize={10} />
+                    <Tooltip contentStyle={{ backgroundColor: '#070c18', borderColor: '#162238', color: '#f8fafc', fontSize: '11px' }} />
+                    <Line type="monotone" dataKey="voltage" name="Voltage (V)" stroke="#38bdf8" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="current" name="Current (A)" stroke="#f59e0b" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+          </div>
+
+          {/* System Data Flow Topology */}
+          <SystemFlowDiagram />
+
+        </div>
+
+        {/* Right Column (1/3): Today's Summary & System Health Grid */}
+        <div className="space-y-6">
+          
+          {/* Today's Summary Card */}
+          <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] shadow-lg space-y-3">
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-mono">
+              <Activity className="w-4 h-4 text-emerald-400" />
+              Today's Performance Summary
+            </h3>
+
+            <div className="grid grid-cols-2 gap-3 pt-2 font-mono text-xs">
+              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
+                <span className="text-[10px] text-slate-400 block">Total Energy</span>
+                <span className="text-lg font-bold text-emerald-400">{energy} kWh</span>
+              </div>
+              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
+                <span className="text-[10px] text-slate-400 block">Peak Power</span>
+                <span className="text-lg font-bold text-amber-400">1.21 kW</span>
+              </div>
+              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
+                <span className="text-[10px] text-slate-400 block">Avg Temperature</span>
+                <span className="text-lg font-bold text-slate-100">30.8 °C</span>
+              </div>
+              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
+                <span className="text-[10px] text-slate-400 block">Packet Success</span>
+                <span className="text-lg font-bold text-cyan-300">99.7 %</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* FULL WIDTH: SYSTEM HEALTH GRID */}
       <SystemHealthGrid />
 
     </div>

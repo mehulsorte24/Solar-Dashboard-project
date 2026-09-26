@@ -5,85 +5,97 @@ interface KpiCardProps {
   title: string;
   value: string | number;
   unit?: string;
-  subtitle?: string;
   icon: LucideIcon;
-  statusColor?: 'green' | 'yellow' | 'red' | 'blue';
-  technicalDetail?: string;
+  colorScheme?: 'green' | 'amber' | 'cyan' | 'purple' | 'rose';
   trend?: string;
+  badgeText?: string;
+  statusText?: string;
 }
 
 export const KpiCard: React.FC<KpiCardProps> = ({
   title,
   value,
   unit,
-  subtitle,
   icon: Icon,
-  statusColor = 'green',
-  technicalDetail,
+  colorScheme = 'green',
   trend,
+  badgeText,
+  statusText = 'NORMAL',
 }) => {
-  const colorStyles = {
+  const styles = {
     green: {
-      bg: 'bg-emerald-950/20',
-      border: 'border-emerald-800/40',
-      iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-      text: 'text-emerald-400',
+      cardClass: 'card-glow-green',
+      iconBox: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
+      badge: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+      valueText: 'text-slate-100',
     },
-    yellow: {
-      bg: 'bg-amber-950/20',
-      border: 'border-amber-800/40',
-      iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-      text: 'text-amber-400',
+    amber: {
+      cardClass: 'card-glow-amber',
+      iconBox: 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+      badge: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
+      valueText: 'text-slate-100',
     },
-    red: {
-      bg: 'bg-rose-950/20',
-      border: 'border-rose-800/40',
-      iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
-      text: 'text-rose-400',
+    cyan: {
+      cardClass: 'card-glow-cyan',
+      iconBox: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      badge: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20',
+      valueText: 'text-slate-100',
     },
-    blue: {
-      bg: 'bg-cyan-950/20',
-      border: 'border-cyan-800/40',
-      iconBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
-      text: 'text-cyan-400',
+    purple: {
+      cardClass: 'card-glow-purple',
+      iconBox: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      badge: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
+      valueText: 'text-slate-100',
     },
-  }[statusColor];
+    rose: {
+      cardClass: 'card-glow-rose',
+      iconBox: 'bg-rose-500/20 text-rose-400 border border-rose-500/30',
+      badge: 'bg-rose-500/10 text-rose-400 border border-rose-500/20',
+      valueText: 'text-slate-100',
+    },
+  }[colorScheme];
 
   return (
-    <div className={`p-4 rounded-2xl border ${colorStyles.border} ${colorStyles.bg} bg-slate-900/80 backdrop-blur-sm transition-all hover:border-slate-700 shadow-md flex flex-col justify-between`}>
+    <div className={`p-4 rounded-2xl ${styles.cardClass} backdrop-blur-md transition-all duration-300 hover:translate-y-[-2px] flex flex-col justify-between`}>
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <div className="space-y-1">
+          <span className="text-xs font-medium text-slate-400 tracking-wide">
             {title}
           </span>
-          <div className="flex items-baseline gap-1.5 mt-1.5">
-            <span className="text-2xl lg:text-3xl font-bold font-mono tracking-tight text-slate-100">
+          <div className="flex items-baseline gap-1.5 pt-1">
+            <span className={`text-2xl xl:text-3xl font-bold tracking-tight font-mono ${styles.valueText}`}>
               {value}
             </span>
             {unit && (
-              <span className="text-sm font-semibold text-slate-400 font-sans">
+              <span className="text-sm font-semibold text-slate-400">
                 {unit}
               </span>
             )}
           </div>
         </div>
 
-        <div className={`p-2.5 rounded-xl border ${colorStyles.iconBg} shrink-0`}>
+        <div className={`p-2.5 rounded-xl ${styles.iconBox} shrink-0`}>
           <Icon className="w-5 h-5" />
         </div>
       </div>
 
-      {(subtitle || technicalDetail || trend) && (
-        <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-          {subtitle && <span>{subtitle}</span>}
-          {trend && <span className="text-emerald-400 font-semibold">{trend}</span>}
-          {technicalDetail && (
-            <span className="text-slate-500 text-[10px] truncate max-w-[180px]">
-              {technicalDetail}
-            </span>
-          )}
-        </div>
-      )}
+      <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-[11px] font-mono">
+        {trend && (
+          <span className="text-emerald-400 font-semibold flex items-center gap-1">
+            {trend}
+          </span>
+        )}
+        {badgeText && (
+          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${styles.badge}`}>
+            {badgeText}
+          </span>
+        )}
+        {!trend && !badgeText && (
+          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${styles.badge}`}>
+            {statusText}
+          </span>
+        )}
+      </div>
     </div>
   );
 };
