@@ -11,7 +11,7 @@ import { Zap, Battery, Gauge, Activity, Thermometer, Sun, ShieldCheck, CheckCirc
 import { ResponsiveContainer, BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export const DashboardPage: React.FC = () => {
-  const { dashboardSummary, latestTelemetry, operatingMode } = useSystem();
+  const { dashboardSummary, latestTelemetry, operatingMode, setActivePage } = useSystem();
   const [history, setHistory] = useState<TelemetryData[]>([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const DashboardPage: React.FC = () => {
   const temp = latestTelemetry?.temperature ?? dashboardSummary?.temperature ?? 31.0;
   const humidity = latestTelemetry?.humidity ?? dashboardSummary?.humidity ?? 77.8;
 
-  // Mock bar data for daily energy generation
+  // Bar data for daily energy generation
   const barData = [
     { day: 'Mon', energy: 10.2 },
     { day: 'Tue', energy: 11.4 },
@@ -39,30 +39,32 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Greeting Banner (Matching Image 1) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      {/* Greeting Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-[#E8DFD3] shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <Sun className="w-5 h-5 text-amber-400" />
-            <h2 className="text-xl font-bold tracking-wide text-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#F7E6CA] border border-[#E8D59E] text-[#785918] flex items-center justify-center shrink-0">
+              <Sun className="w-4 h-4 stroke-[2.25]" />
+            </div>
+            <h2 className="text-xl font-black tracking-tight text-[#181412]">
               Good Morning, Operator
             </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Here's what's happening with your solar system today.
+          <p className="text-xs text-[#3B322B] font-medium mt-1">
+            Real-time telemetry and supervisory control for your solar infrastructure.
           </p>
         </div>
 
         {operatingMode === 'simple' && (
-          <div className="px-3.5 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs font-semibold text-emerald-300 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>🟢 OPERATOR MODE ACTIVE — SYSTEM SAFE</span>
+          <div className="px-3.5 py-1.5 rounded-full bg-[#EBF4EE] border border-[#B7DFC0] text-xs font-bold text-[#1E522F] flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-sm">
+            <CheckCircle2 className="w-4 h-4 text-[#1E522F]" />
+            <span>OPERATOR MODE ACTIVE — SYSTEM SAFE</span>
           </div>
         )}
       </div>
 
-      {/* 6 DISTINCT KPI CARDS (Matching Image 1) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
+      {/* 6 DISTINCT KPI CARDS (Well-balanced responsive grid) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
         
         {/* 1. Current Power */}
         <KpiCard
@@ -70,8 +72,8 @@ export const DashboardPage: React.FC = () => {
           value={power}
           unit="W"
           icon={Zap}
-          colorScheme="green"
-          trend="↑ 4.2% vs yesterday"
+          colorScheme="amber"
+          trend="↑ 4.2% vs avg"
         />
 
         {/* 2. Today's Energy */}
@@ -80,13 +82,13 @@ export const DashboardPage: React.FC = () => {
           value={energy}
           unit="kWh"
           icon={Battery}
-          colorScheme="amber"
-          trend="↑ 12.7% vs yesterday"
+          colorScheme="green"
+          trend="↑ 12.7% yield"
         />
 
         {/* 3. Voltage */}
         <KpiCard
-          title="Voltage"
+          title="Grid AC Voltage"
           value={voltage}
           unit="V"
           icon={Gauge}
@@ -96,7 +98,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* 4. Current */}
         <KpiCard
-          title="Current"
+          title="Electrical Current"
           value={current}
           unit="A"
           icon={Activity}
@@ -106,12 +108,12 @@ export const DashboardPage: React.FC = () => {
 
         {/* 5. Temperature */}
         <KpiCard
-          title="Temperature"
+          title="Ambient Temperature"
           value={temp}
           unit="°C"
           icon={Thermometer}
           colorScheme="rose"
-          statusText="NORMAL"
+          statusText="OPTIMAL"
         />
 
         {/* 6. System Status */}
@@ -120,69 +122,71 @@ export const DashboardPage: React.FC = () => {
           value="ONLINE"
           icon={ShieldCheck}
           colorScheme="green"
-          badgeText="● ONLINE"
+          badgeText="● ALL OK"
         />
 
       </div>
 
-      {/* MIDDLE SECTION: Charts & Side Widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* MIDDLE SECTION: Main Power Area Chart & Side Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         {/* Left Column (2/3): Power Generation + Environmental */}
         <div className="lg:col-span-2 space-y-6">
           
           {/* Main Power Generation Area Chart */}
-          <PowerTimeChart data={history} title="Power Generation (Real-time power output)" height={280} />
+          <PowerTimeChart data={history} title="Power Generation (Real-time output)" height={280} />
 
           {/* Environmental Conditions Card */}
-          <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] backdrop-blur-md shadow-lg space-y-4">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-mono">
-              <Thermometer className="w-4 h-4 text-cyan-400" />
-              Environmental Conditions
+          <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm space-y-4">
+            <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-[#FAF7F2] text-[#3B322B] flex items-center justify-center border border-[#E8DFD3]">
+                <Thermometer className="w-3.5 h-3.5" />
+              </span>
+              Ambient & Environmental Conditions
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-3.5 rounded-xl bg-[#070c18] border border-rose-500/20 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3] flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
+                  <div className="w-8 h-8 rounded-xl bg-[#F6ECE8] text-[#8C3830] border border-[#D9BBB0] flex items-center justify-center">
                     <Thermometer className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[11px] text-slate-400 block">Temperature</span>
-                    <span className="text-lg font-bold text-slate-100 font-mono">{temp} °C</span>
+                    <span className="text-xs font-bold text-[#2E2722] block">Ambient Temperature</span>
+                    <span className="text-xl font-black text-[#181412] font-mono">{temp} °C</span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-[#EBF4EE] text-[#1E522F] border border-[#B7DFC0]">
                   Normal
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#070c18] border border-purple-500/20 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3] flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+                  <div className="w-8 h-8 rounded-xl bg-[#F4EFEA] text-[#423429] border border-[#AD9C8E] flex items-center justify-center">
                     <Droplets className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[11px] text-slate-400 block">Humidity</span>
-                    <span className="text-lg font-bold text-slate-100 font-mono">{humidity} %</span>
+                    <span className="text-xs font-bold text-[#2E2722] block">Relative Humidity</span>
+                    <span className="text-xl font-black text-[#181412] font-mono">{humidity} %</span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-[#EBF4EE] text-[#1E522F] border border-[#B7DFC0]">
                   Normal
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#070c18] border border-amber-500/20 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3] flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                  <div className="w-8 h-8 rounded-xl bg-[#FDF6E7] text-[#785918] border border-[#E8D59E] flex items-center justify-center">
                     <Lightbulb className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[11px] text-slate-400 block">Ambient Light</span>
-                    <span className="text-lg font-bold text-slate-100 font-mono">856 lux</span>
+                    <span className="text-xs font-bold text-[#2E2722] block">Ambient Solar Light</span>
+                    <span className="text-xl font-black text-[#181412] font-mono">856 lux</span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-[#EBF4EE] text-[#1E522F] border border-[#B7DFC0]">
                   Good
                 </span>
               </div>
@@ -197,43 +201,50 @@ export const DashboardPage: React.FC = () => {
           {/* LoRa Communication Quality */}
           <CommunicationQualityCard />
 
-          {/* Recent Alerts Panel (Matching Image 1) */}
-          <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] backdrop-blur-md shadow-lg space-y-4">
+          {/* Recent Alerts Panel */}
+          <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-mono">
-                <Bell className="w-4 h-4 text-rose-400" />
+              <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+                <span className="w-7 h-7 rounded-lg bg-[#FBF0EE] text-[#8C3830] flex items-center justify-center border border-[#D9BBB0]">
+                  <Bell className="w-3.5 h-3.5" />
+                </span>
                 Recent Alerts
               </h3>
-              <span className="text-[11px] text-cyan-400 cursor-pointer hover:underline">View All</span>
+              <button
+                onClick={() => setActivePage('alerts')}
+                className="text-xs font-bold text-[#785918] hover:underline"
+              >
+                View All
+              </button>
             </div>
 
             <div className="space-y-2.5">
-              <div className="p-2.5 rounded-xl bg-[#070c18] border border-rose-500/30 flex items-center justify-between text-xs">
+              <div className="p-3 rounded-xl bg-[#FBF0EE] border border-[#D9BBB0] flex items-center justify-between text-xs">
                 <div>
-                  <div className="font-bold text-slate-200">High Temperature</div>
-                  <div className="text-[10px] text-slate-500 font-mono">26 Sep, 10:32 AM • Ambient 41.2°C</div>
+                  <div className="font-bold text-[#181412]">High Temperature Warning</div>
+                  <div className="text-[11px] text-[#3B322B] font-mono font-medium mt-0.5">26 Sep, 10:32 AM • Ambient 41.2°C</div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-950 text-rose-300 border border-rose-800">
+                <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#F6ECE8] text-[#8C3830] border border-[#D9BBB0]">
                   CRITICAL
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-[#070c18] border border-amber-500/30 flex items-center justify-between text-xs">
+              <div className="p-3 rounded-xl bg-[#FDF6E7] border border-[#E8D59E] flex items-center justify-between text-xs">
                 <div>
-                  <div className="font-bold text-slate-200">Low Communication</div>
-                  <div className="text-[10px] text-slate-500 font-mono">26 Sep, 09:54 AM • LoRa signal degraded</div>
+                  <div className="font-bold text-[#181412]">Low RSSI Telemetry</div>
+                  <div className="text-[11px] text-[#3B322B] font-mono font-medium mt-0.5">26 Sep, 09:54 AM • Signal degraded</div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-950 text-amber-300 border border-amber-800">
+                <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#F7E6CA] text-[#7A4F08] border border-[#E8D59E]">
                   WARNING
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-[#070c18] border border-cyan-500/30 flex items-center justify-between text-xs">
+              <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3] flex items-center justify-between text-xs">
                 <div>
-                  <div className="font-bold text-slate-200">System Recovered</div>
-                  <div className="text-[10px] text-slate-500 font-mono">26 Sep, 09:58 AM • MQTT reconnected</div>
+                  <div className="font-bold text-[#181412]">Broker Synchronized</div>
+                  <div className="text-[11px] text-[#3B322B] font-mono font-medium mt-0.5">26 Sep, 09:58 AM • MQTT connected</div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#F4EFEA] text-[#362A1F] border border-[#AD9C8E]">
                   INFO
                 </span>
               </div>
@@ -244,93 +255,117 @@ export const DashboardPage: React.FC = () => {
 
       </div>
 
-      {/* BOTTOM SECTION: Energy Generation & Voltage Line + Today Summary & Flow */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* BALANCED 3-COLUMN METRIC SECTION: Daily Energy, Overlay, and Performance Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         
-        {/* Left Column (2/3): Daily Energy Bar Chart & Voltage/Current Dual Line */}
-        <div className="lg:col-span-2 space-y-6">
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Daily Energy Generation Bar Chart */}
-            <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] shadow-lg">
-              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4 flex items-center gap-2 font-mono">
-                <BarChart3 className="w-4 h-4 text-cyan-400" />
-                Energy Generation (Daily kWh)
-              </h3>
-              <div style={{ width: '100%', height: 200 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#162238" vertical={false} />
-                    <XAxis dataKey="day" stroke="#64748b" fontSize={11} axisLine={{ stroke: '#162238' }} />
-                    <YAxis stroke="#64748b" fontSize={11} axisLine={{ stroke: '#162238' }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#070c18', borderColor: '#162238', color: '#f8fafc', fontSize: '11px' }} />
-                    <Bar dataKey="energy" fill="#06b6d4" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Voltage & Current Dual Line Chart */}
-            <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] shadow-lg">
-              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4 flex items-center gap-2 font-mono">
-                <TrendingUp className="w-4 h-4 text-purple-400" />
-                Voltage & Current Overlay
-              </h3>
-              <div style={{ width: '100%', height: 200 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={history.slice(-10)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#162238" vertical={false} />
-                    <XAxis dataKey="timestamp" tickFormatter={(t) => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} stroke="#64748b" fontSize={10} />
-                    <YAxis stroke="#64748b" fontSize={10} />
-                    <Tooltip contentStyle={{ backgroundColor: '#070c18', borderColor: '#162238', color: '#f8fafc', fontSize: '11px' }} />
-                    <Line type="monotone" dataKey="voltage" name="Voltage (V)" stroke="#38bdf8" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="current" name="Current (A)" stroke="#f59e0b" strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
+        {/* Card 1: Daily Energy Generation Bar Chart */}
+        <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm flex flex-col justify-between">
+          <div className="mb-4">
+            <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-[#F7E6CA] text-[#785918] flex items-center justify-center border border-[#E8D59E]">
+                <BarChart3 className="w-3.5 h-3.5" />
+              </span>
+              Daily Energy Generation (kWh)
+            </h3>
+            <p className="text-xs text-[#3B322B] font-medium mt-0.5">Audited 7-day cumulative yield</p>
           </div>
 
-          {/* System Data Flow Topology */}
-          <SystemFlowDiagram />
-
+          <div style={{ width: '100%', height: 210 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#EFE8DE" vertical={false} />
+                <XAxis dataKey="day" stroke="#3B322B" fontSize={11} fontWeight={600} axisLine={{ stroke: '#E8DFD3' }} />
+                <YAxis stroke="#3B322B" fontSize={11} fontWeight={600} axisLine={{ stroke: '#E8DFD3' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#FFFFFF',
+                    borderColor: '#E8DFD3',
+                    borderRadius: '0.75rem',
+                    color: '#181412',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 20px -2px rgba(173, 156, 142, 0.2)'
+                  }}
+                  formatter={(val: any) => [`${val} kWh`, 'Yield']}
+                />
+                <Bar dataKey="energy" fill="#C4922A" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        {/* Right Column (1/3): Today's Summary & System Health Grid */}
-        <div className="space-y-6">
-          
-          {/* Today's Summary Card */}
-          <div className="p-5 rounded-2xl border border-[#162238] bg-[#0b1426] shadow-lg space-y-3">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-mono">
-              <Activity className="w-4 h-4 text-emerald-400" />
-              Today's Performance Summary
+        {/* Card 2: Voltage & Current Dual Line Chart */}
+        <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm flex flex-col justify-between">
+          <div className="mb-4">
+            <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-[#FAF7F2] text-[#423429] flex items-center justify-center border border-[#E8DFD3]">
+                <TrendingUp className="w-3.5 h-3.5" />
+              </span>
+              Voltage & Current Overlay
             </h3>
-
-            <div className="grid grid-cols-2 gap-3 pt-2 font-mono text-xs">
-              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
-                <span className="text-[10px] text-slate-400 block">Total Energy</span>
-                <span className="text-lg font-bold text-emerald-400">{energy} kWh</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
-                <span className="text-[10px] text-slate-400 block">Peak Power</span>
-                <span className="text-lg font-bold text-amber-400">1.21 kW</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
-                <span className="text-[10px] text-slate-400 block">Avg Temperature</span>
-                <span className="text-lg font-bold text-slate-100">30.8 °C</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#070c18] border border-[#162238]">
-                <span className="text-[10px] text-slate-400 block">Packet Success</span>
-                <span className="text-lg font-bold text-cyan-300">99.7 %</span>
-              </div>
-            </div>
+            <p className="text-xs text-[#3B322B] font-medium mt-0.5">AC phase parameters synchronization</p>
           </div>
 
+          <div style={{ width: '100%', height: 210 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={history.slice(-10)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#EFE8DE" vertical={false} />
+                <XAxis dataKey="timestamp" tickFormatter={(t) => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} stroke="#3B322B" fontSize={10} fontWeight={600} />
+                <YAxis stroke="#3B322B" fontSize={10} fontWeight={600} axisLine={{ stroke: '#E8DFD3' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#FFFFFF',
+                    borderColor: '#E8DFD3',
+                    borderRadius: '0.75rem',
+                    color: '#181412',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 20px -2px rgba(173, 156, 142, 0.2)'
+                  }}
+                />
+                <Line type="monotone" dataKey="voltage" name="Voltage (V)" stroke="#8C7A6B" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="current" name="Current (A)" stroke="#C4922A" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Card 3: Today's Summary Card */}
+        <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-[#EBF4EE] text-[#1E522F] flex items-center justify-center border border-[#B7DFC0]">
+                <Activity className="w-3.5 h-3.5" />
+              </span>
+              Today's Performance Summary
+            </h3>
+            <p className="text-xs text-[#3B322B] font-medium mt-0.5">Aggregated metrics overview</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs">
+            <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+              <span className="text-[11px] text-[#2E2722] font-bold uppercase block font-sans">Total Energy Yield</span>
+              <span className="text-xl font-black text-[#1E522F]">{energy} kWh</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+              <span className="text-[11px] text-[#2E2722] font-bold uppercase block font-sans">Peak Generation Power</span>
+              <span className="text-xl font-black text-[#785918]">1.21 kW</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+              <span className="text-[11px] text-[#2E2722] font-bold uppercase block font-sans">Average Temperature</span>
+              <span className="text-xl font-black text-[#181412]">30.8 °C</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+              <span className="text-[11px] text-[#2E2722] font-bold uppercase block font-sans">Packet Success Rate</span>
+              <span className="text-xl font-black text-[#362A1F]">99.7 %</span>
+            </div>
+          </div>
         </div>
 
       </div>
+
+      {/* FULL WIDTH: SYSTEM DATA FLOW TOPOLOGY */}
+      <SystemFlowDiagram />
 
       {/* FULL WIDTH: SYSTEM HEALTH GRID */}
       <SystemHealthGrid />

@@ -31,21 +31,23 @@ export const RealtimeStreamChart: React.FC<RealtimeStreamChartProps> = ({ latest
   });
 
   return (
-    <div className="p-5 rounded-2xl border border-slate-800 bg-slate-900/90 backdrop-blur-md shadow-lg flex flex-col justify-between">
+    <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-            <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+          <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-[#EBF4EE] text-[#1E522F] flex items-center justify-center border border-[#B7DFC0]">
+              <Radio className="w-3.5 h-3.5 animate-pulse stroke-[2.2]" />
+            </span>
             Live Stream Telemetry Buffer (Real-Time)
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-[#3B322B] font-medium mt-1">
             Streaming directly from ESP32 → SX1278 LoRa → MQTT → WebSocket without page refresh.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-400 flex items-center gap-1.5 font-mono">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-[#EBF4EE] border border-[#B7DFC0] text-[#1E522F] flex items-center gap-1.5 font-mono shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-[#1E522F] animate-ping" />
             ● LIVE STREAM
           </span>
         </div>
@@ -54,45 +56,49 @@ export const RealtimeStreamChart: React.FC<RealtimeStreamChartProps> = ({ latest
       <div style={{ width: '100%', height: 280 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={formattedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#EFE8DE" vertical={false} />
             <XAxis
               dataKey="timeLabel"
-              stroke="#64748b"
+              stroke="#3B322B"
               fontSize={10}
+              fontWeight={600}
               tickLine={false}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#E8DFD3' }}
             />
             <YAxis
-              stroke="#64748b"
+              stroke="#3B322B"
               fontSize={10}
+              fontWeight={600}
               tickLine={false}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#E8DFD3' }}
               unit="W"
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#090d16',
-                borderColor: '#334155',
+                backgroundColor: '#FFFFFF',
+                borderColor: '#E8DFD3',
                 borderRadius: '0.75rem',
-                color: '#f8fafc',
+                color: '#181412',
                 fontSize: '12px',
-                fontFamily: 'monospace'
+                fontFamily: 'monospace',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 20px -2px rgba(173, 156, 142, 0.25)'
               }}
             />
             <Line
               type="monotone"
               dataKey="power"
               name="Power (W)"
-              stroke="#10b981"
+              stroke="#C4922A"
               strokeWidth={2.5}
-              dot={{ r: 3, fill: '#10b981' }}
+              dot={{ r: 3, fill: '#C4922A' }}
               isAnimationActive={false}
             />
             <Line
               type="monotone"
               dataKey="voltage"
               name="Voltage (V)"
-              stroke="#38bdf8"
+              stroke="#8C7A6B"
               strokeWidth={1.5}
               dot={false}
               isAnimationActive={false}

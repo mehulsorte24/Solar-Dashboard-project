@@ -150,10 +150,28 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
+const defaultContextValue: SystemContextType = {
+  operatingMode: 'technical',
+  setOperatingMode: () => {},
+  dataSource: 'mock',
+  setDataSourceMode: () => {},
+  activePage: 'dashboard',
+  setActivePage: () => {},
+  latestTelemetry: null,
+  dashboardSummary: null,
+  thresholds: DEFAULT_THRESHOLDS,
+  updateThresholds: () => {},
+  toasts: [],
+  addToast: () => {},
+  removeToast: () => {},
+  refreshDashboard: async () => {},
+  isLoading: false,
+};
+
 export const useSystem = () => {
   const context = useContext(SystemContext);
   if (!context) {
-    throw new Error('useSystem must be used within a SystemProvider');
+    return defaultContextValue;
   }
   return context;
 };

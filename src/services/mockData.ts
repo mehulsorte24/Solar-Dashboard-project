@@ -175,7 +175,7 @@ export const MOCK_DEVICES: DeviceInfo[] = [
   },
   {
     device_id: 'DHT001',
-    device_name: 'DHT22 Temp & Humidity Sensor',
+    device_name: 'DHT22 Temperature & Humidity Sensor',
     device_type: 'DHT22',
     location: 'Solar Panel Array Weather Shelter',
     status: 'ONLINE',
@@ -190,7 +190,7 @@ export const MOCK_ALERTS: AlertItem[] = [
     device_id: 'TX001',
     alert_type: 'HIGH TEMPERATURE',
     severity: 'WARNING',
-    message: 'Solar Panel Ambient Temp reached 41.2°C (Warning Threshold: 40.0°C)',
+    message: 'Solar Panel Ambient Temperature reached 41.2°C (Warning Threshold: 40.0°C)',
     value: 41.2,
     threshold: 40.0,
     created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),

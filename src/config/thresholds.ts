@@ -26,14 +26,14 @@ export function evaluateCommStatus(rssi: number, snr: number): CommStatusType {
 export function getCommStatusColor(status: CommStatusType): string {
   switch (status) {
     case 'EXCELLENT':
-      return 'text-emerald-400 bg-emerald-950/50 border-emerald-800';
+      return 'text-[#3B724D] bg-[#EBF4EE] border-[#B7DFC0]';
     case 'STABLE':
-      return 'text-cyan-400 bg-cyan-950/50 border-cyan-800';
+      return 'text-[#5C4D40] bg-[#F4EFEA] border-[#AD9C8E]';
     case 'WEAK':
-      return 'text-amber-400 bg-amber-950/50 border-amber-800';
+      return 'text-[#916212] bg-[#FDF6E7] border-[#E8D59E]';
     case 'DISCONNECTED':
-      return 'text-rose-400 bg-rose-950/50 border-rose-800';
+      return 'text-[#A64B42] bg-[#FBF0EE] border-[#D9BBB0]';
     default:
-      return 'text-slate-400 bg-slate-900 border-slate-700';
+      return 'text-[#6E645B] bg-[#F4EFEA] border-[#D9CEBF]';
   }
 }

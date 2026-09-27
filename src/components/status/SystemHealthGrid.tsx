@@ -22,7 +22,7 @@ export const SystemHealthGrid: React.FC = () => {
       category: 'hardware',
       icon: Thermometer,
       online: health?.sensor_dht22 ?? true,
-      subtitle: 'Ambient Temp & Humidity'
+      subtitle: 'Ambient Temperature & Humidity'
     },
     {
       id: 'energy_meter',
@@ -50,7 +50,7 @@ export const SystemHealthGrid: React.FC = () => {
     },
     {
       id: 'rpi',
-      name: 'Raspberry Pi',
+      name: 'Raspberry Pi 4',
       category: 'gateway',
       icon: Cpu,
       online: health?.raspberry_pi ?? true,
@@ -62,7 +62,7 @@ export const SystemHealthGrid: React.FC = () => {
       category: 'cloud',
       icon: Network,
       online: health?.mqtt_broker ?? true,
-      subtitle: 'Pub/Sub Broker'
+      subtitle: 'Pub/Sub Broker Stream'
     },
     {
       id: 'postgres',
@@ -74,75 +74,77 @@ export const SystemHealthGrid: React.FC = () => {
     },
     {
       id: 'plc',
-      name: 'Siemens PLC',
+      name: 'Siemens S7-1200',
       category: 'industrial',
       icon: Layers,
       online: health?.plc ?? true,
-      subtitle: 'S7-1200 Control Path'
+      subtitle: 'PLC Automation Path'
     },
     {
       id: 'scada',
-      name: 'SCADA Station',
+      name: 'WinCC SCADA',
       category: 'industrial',
       icon: Server,
       online: health?.scada ?? true,
-      subtitle: 'WinCC Master Node'
+      subtitle: 'Industrial Master Station'
     },
   ];
 
   return (
-    <div className="p-5 rounded-2xl border border-slate-800 bg-slate-900/90 backdrop-blur-md shadow-lg">
-      <div className="flex items-center justify-between mb-4">
+    <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-            <Server className="w-4 h-4 text-cyan-400" />
+          <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-[#F7E6CA] text-[#785918] flex items-center justify-center border border-[#E8D59E]">
+              <Server className="w-3.5 h-3.5 stroke-[2.2]" />
+            </span>
             System Pipeline & Architecture Health
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-[#3B322B] font-medium mt-0.5">
             Real-time status across IIoT sensors, LoRa wireless, gateway, database, PLC and SCADA nodes.
           </p>
         </div>
-        <span className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-950/80 border border-emerald-800 text-emerald-300 font-mono">
+        <span className="px-3 py-1 text-xs font-bold rounded-full bg-[#EBF4EE] border border-[#B7DFC0] text-[#1E522F] font-mono shrink-0 self-start sm:self-auto shadow-sm">
           9/9 NODES ONLINE
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {nodes.map((node) => {
           const Icon = node.icon;
           return (
             <div
               key={node.id}
-              className={`p-3 rounded-xl border transition-all ${
+              className={`p-3.5 rounded-xl border transition-all ${
                 node.online
-                  ? 'bg-slate-950/70 border-slate-800/90 hover:border-slate-700'
-                  : 'bg-rose-950/30 border-rose-800/60'
-              } flex items-center justify-between gap-3`}
+                  ? 'bg-[#FAF7F2] border-[#E8DFD3] hover:border-[#AD9C8E] hover:bg-white'
+                  : 'bg-[#FBF0EE] border-[#D9BBB0]'
+              } flex items-center justify-between gap-3 shadow-sm`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg border ${
+              <div className="flex items-center gap-3 min-w-0">
+                <div className={`w-8 h-8 rounded-xl border shrink-0 flex items-center justify-center ${
                   node.online
-                    ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
-                    : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                    ? 'bg-[#F7E6CA] border-[#E8D59E] text-[#785918]'
+                    : 'bg-[#FBF0EE] border-[#D9BBB0] text-[#8C3830]'
                 }`}>
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4 stroke-[2.2]" />
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-slate-200">{node.name}</div>
-                  <div className="text-[10px] text-slate-500">{node.subtitle}</div>
+                <div className="min-w-0">
+                  <div className="text-xs font-black text-[#181412] leading-tight">{node.name}</div>
+                  <div className="text-[11px] text-[#3B322B] font-bold leading-tight mt-0.5">{node.subtitle}</div>
                 </div>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
                 {node.online ? (
                   <>
-                    <span className="text-[10px] font-bold text-emerald-400 font-mono">ONLINE</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span className="text-[10px] font-black text-[#1E522F] font-mono">ONLINE</span>
+                    <CheckCircle2 className="w-4 h-4 text-[#1E522F]" />
                   </>
                 ) : (
                   <>
-                    <span className="text-[10px] font-bold text-rose-400 font-mono">FAULT</span>
-                    <AlertCircle className="w-4 h-4 text-rose-400" />
+                    <span className="text-[10px] font-black text-[#8C3830] font-mono">FAULT</span>
+                    <AlertCircle className="w-4 h-4 text-[#8C3830]" />
                   </>
                 )}
               </div>

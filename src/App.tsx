@@ -30,7 +30,7 @@ const MainContent: React.FC = () => {
 export function App() {
   return (
     <SystemProvider>
-      <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
+      <div className="min-h-screen bg-[#FAF7F2] text-[#231F1D] flex flex-col font-sans selection:bg-[#E8D59E] selection:text-[#231F1D]">
         <Header />
         
         <div className="flex-1 flex flex-col lg:flex-row">

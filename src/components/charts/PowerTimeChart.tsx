@@ -28,33 +28,35 @@ export const PowerTimeChart: React.FC<PowerTimeChartProps> = ({
   const currentPower = data.length ? data[data.length - 1].power : 0;
 
   return (
-    <div className="p-5 rounded-2xl border border-slate-800 bg-slate-900/90 backdrop-blur-md shadow-lg flex flex-col justify-between">
+    <div className="p-5 sm:p-6 rounded-2xl border border-[#E8DFD3] bg-white shadow-sm flex flex-col justify-between">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-            <Zap className="w-4 h-4 text-amber-400" />
+          <h3 className="text-sm font-bold text-[#181412] uppercase tracking-wider flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-[#F7E6CA] text-[#785918] flex items-center justify-center border border-[#E8D59E]">
+              <Zap className="w-3.5 h-3.5 stroke-[2.2]" />
+            </span>
             {title}
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-[#3B322B] font-medium mt-1">
             Active generation curve measured in Watts (W) over time.
           </p>
         </div>
 
-        {/* Stats Pills */}
-        <div className="flex items-center gap-3 font-mono text-xs">
-          <div className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="text-[10px] text-slate-500 uppercase block font-sans">Current</span>
-            <span className="font-bold text-amber-400">{currentPower} W</span>
+        {/* Stats Pills with Dark, High Contrast Text */}
+        <div className="flex items-center gap-2.5 font-mono text-xs flex-wrap">
+          <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+            <span className="text-[10px] text-[#2E2722] font-bold uppercase block font-sans">Current</span>
+            <span className="font-black text-[#785918] text-sm">{currentPower} W</span>
           </div>
-          <div className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="text-[10px] text-slate-500 uppercase block font-sans">Peak</span>
-            <span className="font-bold text-emerald-400">{maxPower} W</span>
+          <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+            <span className="text-[10px] text-[#2E2722] font-bold uppercase block font-sans">Peak</span>
+            <span className="font-black text-[#1E522F] text-sm">{maxPower} W</span>
           </div>
-          <div className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="text-[10px] text-slate-500 uppercase block font-sans">Average</span>
-            <span className="font-bold text-cyan-400">{avgPower} W</span>
+          <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD3]">
+            <span className="text-[10px] text-[#2E2722] font-bold uppercase block font-sans">Average</span>
+            <span className="font-black text-[#362A1F] text-sm">{avgPower} W</span>
           </div>
         </div>
       </div>
@@ -65,33 +67,37 @@ export const PowerTimeChart: React.FC<PowerTimeChartProps> = ({
           <AreaChart data={formattedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="powerGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#E8D59E" stopOpacity={0.7} />
+                <stop offset="95%" stopColor="#FAF7F2" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#EFE8DE" vertical={false} />
             <XAxis
               dataKey="timeLabel"
-              stroke="#64748b"
+              stroke="#3B322B"
               fontSize={11}
+              fontWeight={600}
               tickLine={false}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#E8DFD3' }}
             />
             <YAxis
-              stroke="#64748b"
+              stroke="#3B322B"
               fontSize={11}
+              fontWeight={600}
               tickLine={false}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#E8DFD3' }}
               unit="W"
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#090d16',
-                borderColor: '#334155',
+                backgroundColor: '#FFFFFF',
+                borderColor: '#E8DFD3',
                 borderRadius: '0.75rem',
-                color: '#f8fafc',
+                color: '#181412',
                 fontSize: '12px',
-                fontFamily: 'monospace'
+                fontFamily: 'monospace',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 20px -2px rgba(173, 156, 142, 0.25)'
               }}
               formatter={(val: any) => [`${val} Watts`, 'Solar Power']}
               labelFormatter={(label) => `Time: ${label}`}
@@ -99,7 +105,7 @@ export const PowerTimeChart: React.FC<PowerTimeChartProps> = ({
             <Area
               type="monotone"
               dataKey="power"
-              stroke="#f59e0b"
+              stroke="#C4922A"
               strokeWidth={2.5}
               fillOpacity={1}
               fill="url(#powerGradient)"

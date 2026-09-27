@@ -49,24 +49,24 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-full lg:w-60 bg-[#0a1122] border-r border-[#162238] shrink-0 flex flex-col justify-between p-3 lg:p-4">
+    <aside className="w-full lg:w-60 bg-[#FDFBF7] border-r border-[#E8DFD3] shrink-0 flex flex-col justify-between p-3 lg:p-4 shadow-[2px_0_15px_-4px_rgba(173,156,142,0.08)]">
       
       {/* Navigation section */}
       <div className="space-y-6">
         
         {/* Brand header in sidebar */}
         <div className="flex items-center gap-3 px-2 pt-1">
-          <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            <Sun className="w-5 h-5 text-amber-400" />
+          <div className="w-8 h-8 rounded-xl bg-[#F7E6CA] border border-[#E8D59E] text-[#785918] flex items-center justify-center shrink-0 shadow-xs">
+            <Sun className="w-4 h-4 stroke-[2.2]" />
           </div>
           <div>
-            <div className="text-sm font-bold text-slate-100">SolarMonitor</div>
-            <div className="text-[10px] text-slate-500 font-mono">IIoT SCADA Platform</div>
+            <div className="text-sm font-black text-[#181412]">SolarMonitor</div>
+            <div className="text-[10px] text-[#3B322B] font-mono font-bold">Quiet Luxury IIoT</div>
           </div>
         </div>
 
         {/* Navigation buttons */}
-        <nav className="space-y-1">
+        <nav className="space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activePage === item.id;
@@ -74,22 +74,22 @@ export const Sidebar: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActivePage(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-lg shadow-blue-600/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#0e1930]'
+                    ? 'bg-[#F7E6CA] text-[#181412] font-black border border-[#E8D59E] shadow-xs'
+                    : 'text-[#2E2722] font-bold hover:text-[#181412] hover:bg-[#FAF7F2]'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 stroke-[2.2] ${isActive ? 'text-[#785918]' : 'text-[#3B322B]'}`} />
                   <span>{item.label}</span>
                 </div>
 
                 {item.badge && (
-                  <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
+                  <span className={`px-2 py-0.5 text-[10px] font-black rounded-full ${
                     item.badge === 'LIVE'
-                      ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                      : 'bg-rose-950 text-rose-300 border border-rose-800'
+                      ? 'bg-[#EBF4EE] text-[#1E522F] border border-[#B7DFC0]'
+                      : 'bg-[#FBF0EE] text-[#8C3830] border border-[#D9BBB0]'
                   }`}>
                     {item.badge}
                   </span>
@@ -100,20 +100,20 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Sidebar Footer Graphic Card (From Image 1) */}
+      {/* Sidebar Footer Graphic Card */}
       <div className="mt-6 space-y-3">
-        <div className="p-3.5 rounded-2xl bg-gradient-to-b from-[#0e1b36] to-[#070c18] border border-blue-500/20 text-xs space-y-2">
-          <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-            <Leaf className="w-4 h-4" />
-            <span>Clean Energy Brighter Future</span>
+        <div className="p-3.5 rounded-2xl bg-gradient-to-b from-[#FAF7F2] to-[#F7E6CA] border border-[#E8D59E] text-xs space-y-2 shadow-xs">
+          <div className="flex items-center gap-2 text-[#1E522F] font-black">
+            <Leaf className="w-4 h-4 stroke-[2.2]" />
+            <span>Clean Energy Monitoring</span>
           </div>
-          <p className="text-[10px] text-slate-400 leading-normal">
-            Real-time monitoring for a sustainable tomorrow.
+          <p className="text-[11px] text-[#2E2722] font-medium leading-relaxed">
+            Sustainable solar efficiency with precision SCADA control.
           </p>
         </div>
 
-        <div className="text-[10px] text-slate-500 text-center font-mono">
-          Final Year IIoT Project v1.0
+        <div className="text-[10px] text-[#3B322B] text-center font-mono font-bold">
+          Quiet Luxury Edition • v1.0
         </div>
       </div>
 

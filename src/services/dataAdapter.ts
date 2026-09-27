@@ -25,6 +25,10 @@ class SystemDataAdapter {
   public setDataSource(mode: DataSourceMode): void {
     this.dataSource = mode;
     localStorage.setItem('SOLAR_DATA_SOURCE', mode);
+    if (mode === 'mock' && this.wsService) {
+      this.wsService.disconnect();
+      this.wsService = null;
+    }
   }
 
   public async getDashboardSummary(): Promise<DashboardSummary> {
